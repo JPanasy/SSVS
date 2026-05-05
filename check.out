@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "D:\ml_models\SSVS\train.py", line 25, in <module>
+    from util.visualizer import Visualizer
+  File "D:\ml_models\SSVS\util\visualizer.py", line 6, in <module>
+    from . import util, html
+  File "D:\ml_models\SSVS\util\html.py", line 1, in <module>
+    import dominate
+ModuleNotFoundError: No module named 'dominate'
+Traceback (most recent call last):
+  File "D:\ml_models\SSVS\train.py", line 25, in <module>
+    from util.visualizer import Visualizer
+  File "D:\ml_models\SSVS\util\visualizer.py", line 6, in <module>
+    from . import util, html
+  File "D:\ml_models\SSVS\util\html.py", line 1, in <module>
+    import dominate
+ModuleNotFoundError: No module named 'dominate'

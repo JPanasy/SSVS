@@ -1,0 +1,14 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Training outputs
+checkpoints/
+
+# Optional: local editor files
+.vscode/

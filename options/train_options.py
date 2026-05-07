@@ -19,8 +19,14 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--update_html_freq', type=int, default=1000, help='frequency of saving training results to html')
         parser.add_argument('--print_freq', type=int, default=100, help='frequency of showing training results on console')
         parser.add_argument('--no_html', action='store_true', help='do not save intermediate training results to [opt.checkpoints_dir]/[opt.name]/web/')
+        parser.add_argument('--use_wandb', action='store_true', help='log metrics and images to Weights & Biases')
+        parser.add_argument('--wandb_project', type=str, default='SSVS', help='Weights & Biases project name')
+        parser.add_argument('--wandb_mode', type=str, default='offline', choices=['offline', 'online', 'disabled'],
+                    help='Weights & Biases mode')
+        parser.add_argument('--wandb_entity', type=str, default='', help='Weights & Biases entity/team (optional)')
         # network saving and loading parameters
-        parser.add_argument('--save_latest_freq', type=int, default=5000, help='frequency of saving the latest results')
+        parser.add_argument('--save_latest_freq', type=int, default=1,
+                    help='frequency of saving the latest results; use 1 to resume from nearly any stop point')
         parser.add_argument('--save_epoch_freq', type=int, default=5, help='frequency of saving checkpoints at the end of epochs')
         parser.add_argument('--save_by_iter', action='store_true', help='whether saves model by iteration')
         parser.add_argument('--continue_train', action='store_true', help='continue training: load the latest model')
@@ -35,6 +41,16 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--pool_size', type=int, default=50, help='the size of image buffer that stores previously generated images')
         parser.add_argument('--lr_policy', type=str, default='linear', help='learning rate policy. [linear | step | plateau | cosine]')
         parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
+        # ARCADE transfer learning parameters
+        parser.add_argument('--arcade_mask_type', type=str, default='vessel', choices=['vessel', 'stenosis', 'both'],
+                            help='Which masks to learn from ARCADE: vessel or stenosis or both')
+        parser.add_argument('--arcade_subset', type=str, default='syntax', choices=['syntax', 'stenosis'],
+                            help='Which ARCADE subset to use: syntax (vessels) or stenosis')
+        parser.add_argument('--lambda_vessel', type=float, default=1.0, help='Weight for vessel mask loss in ARCADE training')
+        parser.add_argument('--lambda_stenosis', type=float, default=0.5, help='Weight for stenosis mask loss in ARCADE training')
+        parser.add_argument('--use_focal_loss', action='store_true', help='Use focal loss for ARCADE training (better for imbalanced masks)')
+        parser.add_argument('--n_epochs_constant', type=int, default=100,
+                            help='Number of epochs with constant learning rate before decay (alternative to n_epochs)')
 
         self.isTrain = True
         return parser

@@ -60,8 +60,10 @@ class HTML:
                 for im, txt, link in zip(ims, txts, links):
                     with td(style="word-wrap: break-word;", halign="center", valign="top"):
                         with p():
-                            with a(href=os.path.join('images', link)):
-                                img(style="width:%dpx" % width, src=os.path.join('images', im))
+                            link_path = f"images/{link}"
+                            image_path = f"images/{im}"
+                            with a(href=link_path):
+                                img(style="width:%dpx" % width, src=image_path)
                             br()
                             p(txt)
 

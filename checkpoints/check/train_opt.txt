@@ -1,14 +1,14 @@
 ----------------- Options ---------------
-               batch_size: 2                             
+               batch_size: 4                             	[default: 2]
                     beta1: 0.5                           
           checkpoints_dir: ./checkpoints                 
            continue_train: False                         
                 crop_size: 512                           
-                 dataroot: datasets/ssv                  
+                 dataroot: ./datasets/ssv                	[default: datasets/ssv]
              dataset_mode: usseg                         	[default: template]
                 direction: AtoB                          
               display_env: check                         	[default: main]
-             display_freq: 400                           
+             display_freq: 40                            	[default: 400]
                display_id: 1                             
             display_ncols: 4                             
              display_port: 5565                          
@@ -17,7 +17,7 @@
                     epoch: latest                        
               epoch_count: 1                             
                  gan_mode: lsgan                         
-                  gpu_ids: -1                            	[default: 0,1]
+                  gpu_ids: 0                             	[default: 0,1]
                 init_gain: 0.02                          
                 init_type: normal                        
                  input_nc: 1                             
@@ -50,7 +50,7 @@
                     phase: train                         
                 pool_size: 50                            
                preprocess: resize_and_crop               
-               print_freq: 100                           
+               print_freq: 10                            	[default: 100]
              save_by_iter: False                         
           save_epoch_freq: 5                             
          save_latest_freq: 5000                          

@@ -25,7 +25,7 @@ Your transfer learning pipeline for ARCADE → SSVS vessel segmentation is now f
   - Verification included
   - One-command setup: `python setup_arcade_data.py`
 
-- **`options/train_options.py`** - UPDATED with ARCADE options
+- **ARCADE CLI options** - Added through the ARCADE dataset/model classes
   - New flags: `--arcade_subset`, `--arcade_mask_type`, `--lambda_vessel`, etc.
   - Backward compatible (doesn't affect existing workflows)
 
@@ -58,7 +58,7 @@ Your transfer learning pipeline for ARCADE → SSVS vessel segmentation is now f
 ```bash
 conda activate ssv_modern_py310
 cd C:\monai-projects\SSVS
-python setup_arcade_data.py
+python setup_arcade_data.py --arcade-root "C:\path\to\ARCADE"
 ```
 
 ### Stage 1: Pretrain on ARCADE (3-5 days)

@@ -10,11 +10,15 @@ cd C:\monai-projects\SSVS
 
 ```bash
 # Creates symlink to ARCADE dataset
+python setup_arcade_data.py --arcade-root "C:\path\to\ARCADE"
+
+# Or set ARCADE_ROOT once and use the default command
+set ARCADE_ROOT=C:\path\to\ARCADE
 python setup_arcade_data.py
 
 # Or manually:
 cd datasets
-mklink /D arcade "C:\monai-projects\vascular_proto\data_raw\ARCADE\syntax"
+mklink /D arcade "C:\path\to\ARCADE\syntax"
 cd ..
 ```
 
@@ -30,12 +34,39 @@ python train.py \
   --name arcade_pretrain \
   --model arcade_supervision \
   --dataset_mode arcade \
+  --netG unet_512 \
   --arcade_mask_type vessel \
   --n_epochs 50 \
   --batch_size 4 \
   --gpu_ids 0 \
   --lambda_vessel 1.0 \
   --display_env arcade_pretrain
+```
+
+**Topology-aware loss variant (recommended for vessel masks):**
+
+```bash
+python train.py \
+  --dataroot ./datasets/arcade \
+  --name arcade_unet_ft_cldice_lr1e4 \
+  --model arcade_supervision \
+  --dataset_mode arcade \
+  --netG unet_512 \
+  --arcade_mask_type vessel \
+  --seg_loss bce_focal_tversky_cldice \
+  --lambda_bce 0.5 \
+  --lambda_focal_tversky 0.3 \
+  --lambda_cldice 0.2 \
+  --bce_warmup_epochs 5 \
+  --tversky_alpha 0.7 \
+  --tversky_beta 0.3 \
+  --focal_tversky_gamma 0.75 \
+  --cldice_iter 10 \
+  --lr 0.0001 \
+  --n_epochs 50 \
+  --batch_size 2 \
+  --gpu_ids 0 \
+  --display_env arcade_unet_ft_cldice_lr1e4
 ```
 
 **Monitor Training:**

@@ -30,6 +30,8 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--save_epoch_freq', type=int, default=5, help='frequency of saving checkpoints at the end of epochs')
         parser.add_argument('--save_by_iter', action='store_true', help='whether saves model by iteration')
         parser.add_argument('--continue_train', action='store_true', help='continue training: load the latest model')
+        parser.add_argument('--allow_existing_run', action='store_true',
+                            help='allow writing to an existing checkpoint directory without --continue_train')
         parser.add_argument('--epoch_count', type=int, default=1, help='the starting epoch count, we save the model by <epoch_count>, <epoch_count>+<save_latest_freq>, ...')
         parser.add_argument('--phase', type=str, default='train', help='train, val, test, etc')
         # training parameters
@@ -41,16 +43,5 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--pool_size', type=int, default=50, help='the size of image buffer that stores previously generated images')
         parser.add_argument('--lr_policy', type=str, default='linear', help='learning rate policy. [linear | step | plateau | cosine]')
         parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
-        # ARCADE transfer learning parameters
-        parser.add_argument('--arcade_mask_type', type=str, default='vessel', choices=['vessel', 'stenosis', 'both'],
-                            help='Which masks to learn from ARCADE: vessel or stenosis or both')
-        parser.add_argument('--arcade_subset', type=str, default='syntax', choices=['syntax', 'stenosis'],
-                            help='Which ARCADE subset to use: syntax (vessels) or stenosis')
-        parser.add_argument('--lambda_vessel', type=float, default=1.0, help='Weight for vessel mask loss in ARCADE training')
-        parser.add_argument('--lambda_stenosis', type=float, default=0.5, help='Weight for stenosis mask loss in ARCADE training')
-        parser.add_argument('--use_focal_loss', action='store_true', help='Use focal loss for ARCADE training (better for imbalanced masks)')
-        parser.add_argument('--n_epochs_constant', type=int, default=100,
-                            help='Number of epochs with constant learning rate before decay (alternative to n_epochs)')
-
         self.isTrain = True
         return parser

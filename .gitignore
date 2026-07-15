@@ -1,6 +1,7 @@
 # Python cache
 __pycache__/
 *.py[cod]
+.pytest_cache/
 
 # Virtual environments
 .venv/
@@ -9,6 +10,13 @@ env/
 
 # Training outputs
 checkpoints/
+results/
+runs/
+wandb/
+
+# Local datasets and machine-specific links
+datasets/arcade/
 
 # Optional: local editor files
 .vscode/
+.idea/

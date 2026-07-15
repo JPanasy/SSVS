@@ -69,8 +69,19 @@ class Visualizer():
                 server=opt.display_server,
                 port=opt.display_port,
                 env=opt.display_env,
+                use_incoming_socket=False,
             )
-            if not self.vis.check_connection():
+            try:
+                visdom_connected = self.vis.check_connection()
+            except Exception as exc:
+                print('Visdom connection failed at %s:%s (env=%s): %s' % (
+                    opt.display_server,
+                    opt.display_port,
+                    opt.display_env,
+                    exc,
+                ))
+                visdom_connected = False
+            if not visdom_connected:
                 print('Visdom server not reachable at %s:%s (env=%s).' % (opt.display_server, opt.display_port, opt.display_env))
                 print('Start with: python -m visdom.server -p %s' % opt.display_port)
                 self.use_visdom = False

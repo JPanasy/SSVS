@@ -1,5 +1,6 @@
 import argparse
 import os
+import time
 from util import util
 import torch
 import models
@@ -22,7 +23,7 @@ class BaseOptions():
         # basic parameters
         parser.add_argument('--dataroot', type=str, default='datasets/ssv', help='path to images (should have subfolders trainA, trainB, valA, valB, etc)')
         parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment. It decides where to store samples and models')
-        parser.add_argument('--gpu_ids', type=str, default='0,1', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
+        parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')
         # model parameters
         parser.add_argument('--model', type=str, default='cycle_gan', help='chooses which model to use. [cycle_gan | pix2pix | test | colorization]')
@@ -104,6 +105,16 @@ class BaseOptions():
 
         # save to the disk
         expr_dir = os.path.join(opt.checkpoints_dir, opt.name)
+        if getattr(opt, 'isTrain', False) and not getattr(opt, 'continue_train', False) and not getattr(opt, 'allow_existing_run', False):
+            if os.path.isdir(expr_dir):
+                checkpoint_files = [name for name in os.listdir(expr_dir) if name.endswith('.pth')]
+                if checkpoint_files:
+                    raise RuntimeError(
+                        'Checkpoint directory already contains .pth files: %s\n'
+                        'Use a new --name, add --continue_train to resume, or add '
+                        '--allow_existing_run if you intentionally want to write here.'
+                        % expr_dir
+                    )
         util.mkdirs(expr_dir)
         file_name = os.path.join(expr_dir, '{}_opt.txt'.format(opt.phase))
         with open(file_name, 'wt') as opt_file:
@@ -114,6 +125,14 @@ class BaseOptions():
         """Parse our options, create checkpoints directory suffix, and set up gpu device."""
         opt = self.gather_options()
         opt.isTrain = self.isTrain   # train or test
+        opt.run_identifier = '%s|model=%s|dataset=%s|netG=%s|phase=%s|created=%s' % (
+            opt.name,
+            opt.model,
+            opt.dataset_mode,
+            getattr(opt, 'netG', 'na'),
+            getattr(opt, 'phase', 'na'),
+            time.strftime('%Y%m%d-%H%M%S'),
+        )
 
         # process opt.suffix
         if opt.suffix:
@@ -130,6 +149,19 @@ class BaseOptions():
             if id >= 0:
                 opt.gpu_ids.append(id)
         if len(opt.gpu_ids) > 0:
+            if not torch.cuda.is_available():
+                raise RuntimeError('CUDA was requested with --gpu_ids %s, but CUDA is not available. Use --gpu_ids -1 for CPU.' % ','.join(map(str, opt.gpu_ids)))
+            device_count = torch.cuda.device_count()
+            invalid_ids = [id for id in opt.gpu_ids if id >= device_count]
+            if invalid_ids:
+                raise RuntimeError(
+                    'Invalid --gpu_ids %s. This environment exposes %d CUDA device(s), so valid GPU ids are: %s.'
+                    % (
+                        ','.join(map(str, opt.gpu_ids)),
+                        device_count,
+                        ','.join(map(str, range(device_count))) if device_count else 'none',
+                    )
+                )
             torch.cuda.set_device(opt.gpu_ids[0])
 
         self.opt = opt

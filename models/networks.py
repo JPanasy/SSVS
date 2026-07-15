@@ -544,7 +544,15 @@ class UnetSkipConnectionBlock(nn.Module):
         if self.outermost:
             return self.model(x)
         else:   # add skip connections
-            return torch.cat([x, self.model(x)], 1)
+            out = self.model(x)
+            if x.shape[2:] != out.shape[2:]:
+                raise RuntimeError(
+                    'U-Net skip connection shape mismatch: input %s vs output %s. '
+                    'Use input sizes compatible with the selected U-Net depth; do not '
+                    'pad, crop, or truncate skip tensors to force concatenation.'
+                    % (tuple(x.shape), tuple(out.shape))
+                )
+            return torch.cat([x, out], 1)
 
 
 class NLayerDiscriminator(nn.Module):
